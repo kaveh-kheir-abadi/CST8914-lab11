@@ -50,3 +50,11 @@ button.accordion.is-open {
   overflow: hidden;
   transition: max-height 0.2s ease-in-out;
 }
+.accordion-content:not([hidden]) {
+  max-height: none !important;
+  overflow: visible;
+}
+
+.accordion-content[hidden] {
+  display: none;
+}

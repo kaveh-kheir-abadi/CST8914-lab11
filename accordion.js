@@ -9,22 +9,57 @@
   6. If the accordion is closed we set the max-height of the currently hidden text inside the accordion from 0 to the scroll height of the content inside the accordion. The scroll height refers to the height of an html element in pixels. For this specific example, we are talking about the height of the div with the class accordion-content with all of its nested ptags
 */
 
+
 const accordionBtns = document.querySelectorAll(".accordion");
 
-accordionBtns.forEach((accordion) => {
-  accordion.onclick = function () {
-    this.classList.toggle("is-open");
+accordionBtns.forEach((accordion, index) => {
+  const content = document.getElementById(
+  accordion.getAttribute("aria-controls")
+);
 
-    let content = this.nextElementSibling;
-    console.log(content);
+  accordion.addEventListener("click", () => {
+    const isExpanded =
+      accordion.getAttribute("aria-expanded") === "true";
 
-    if (content.style.maxHeight) {
-      //this is if the accordion is open
+    accordion.setAttribute("aria-expanded", String(!isExpanded));
+    accordion.classList.toggle("is-open", !isExpanded);
+
+    if (isExpanded) {
+      content.hidden = true;
       content.style.maxHeight = null;
     } else {
-      //if the accordion is currently closed
+      content.hidden = false;
       content.style.maxHeight = content.scrollHeight + "px";
-      console.log(content.style.maxHeight);
     }
-  };
+  });
+
+  accordion.addEventListener("keydown", (event) => {
+    let nextIndex;
+
+    switch (event.key) {
+      case "ArrowDown":
+        nextIndex = (index + 1) % accordionBtns.length;
+        break;
+
+      case "ArrowUp":
+        nextIndex =
+          (index - 1 + accordionBtns.length) % accordionBtns.length;
+        break;
+
+      case "Home":
+        nextIndex = 0;
+        break;
+
+      case "End":
+        nextIndex = accordionBtns.length - 1;
+        break;
+
+      default:
+        return;
+    }
+
+    event.preventDefault();
+    accordionBtns[nextIndex].focus();
+  });
 });
+
